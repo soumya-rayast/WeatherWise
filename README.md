@@ -1,5 +1,4 @@
-# React Vite Setup
-
+# Project Setup
 ## Prerequisites
 
 Ensure you have the following installed on your machine:
