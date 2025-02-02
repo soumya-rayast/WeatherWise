@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 
 const suggestions = [
@@ -35,23 +35,37 @@ const suggestions = [
   "Dehradun, Uttarakhand"
 ];
 
-
 const SearchBar = ({ setCity }) => {
   const [input, setInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  
+
+  useEffect(() => {
+    const storedCity = localStorage.getItem("searchedCity");
+    if (storedCity) {
+      setInput(storedCity);
+    }
+  }, []);
+
+
   const handleSearch = () => {
     if (input.trim() !== "") {
-      setCity(input);
-      setInput(""); 
-      setFilteredSuggestions([]); 
+      setCity(input); 
+      saveToHistory(input); 
+      setInput("");
+      setFilteredSuggestions([]);
     }
   };
-
+  const saveToHistory = (city) => {
+    const storedHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    if (!storedHistory.includes(city)) {
+      storedHistory.push(city);
+      localStorage.setItem("searchHistory", JSON.stringify(storedHistory));
+    }
+  };
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInput(value);
-    
+
     if (value) {
       const filtered = suggestions.filter((suggestion) =>
         suggestion.toLowerCase().includes(value.toLowerCase())
@@ -64,8 +78,9 @@ const SearchBar = ({ setCity }) => {
 
   const handleSuggestionClick = (suggestion) => {
     setCity(suggestion);
-    setInput(suggestion); 
-    setFilteredSuggestions([]); 
+    saveToHistory(suggestion);
+    setInput(suggestion);
+    setFilteredSuggestions([]);
   };
 
   return (

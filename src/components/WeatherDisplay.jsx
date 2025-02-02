@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sun, CloudRain, Wind, Thermometer } from 'lucide-react';
 
 // Assets
@@ -8,16 +8,18 @@ import rainyday from '../assets/rainy-day.png';
 import snow from '../assets/snow.png';
 
 const WeatherDisplay = ({ weather }) => {
-  // Map the weather descriptions to corresponding icons
+  const [isCelsius, setIsCelsius] = useState(true);
   const weatherIcons = {
     'clear sky': clearSky,
     'hot': hot,
     'rain': rainyday,
     'snow': snow,
   };
-
-  // Get the appropriate icon based on the current weather description
   const weatherIcon = weatherIcons[weather.weather[0].description.toLowerCase()] || clearSky; 
+
+  // Convert temperature : celsius to farenheit
+  const tempCelsius = weather.main.temp;
+  const tempFahrenheit = (tempCelsius * 9/5) + 32;
 
   return (
     <div className="bg-white p-6 mt-4 rounded-xl shadow-lg text-center">
@@ -33,7 +35,7 @@ const WeatherDisplay = ({ weather }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         <div className="bg-blue-100 p-4 rounded-lg shadow-md">
           <p className="flex items-center justify-center gap-2">
-            <Thermometer /> Temperature: {weather.main.temp}°C
+            <Thermometer /> Temperature: {isCelsius ? `${tempCelsius}°C` : `${tempFahrenheit.toFixed(1)}°F`}
           </p>
         </div>
         <div className="bg-green-100 p-4 rounded-lg shadow-md">
@@ -47,6 +49,11 @@ const WeatherDisplay = ({ weather }) => {
           </p>
         </div>
       </div>
+      <button
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition"
+        onClick={() => setIsCelsius(!isCelsius)}>
+        Switch to {isCelsius ? 'Fahrenheit' : 'Celsius'}
+      </button>
     </div>
   );
 };
